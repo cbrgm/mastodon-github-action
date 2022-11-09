@@ -6,7 +6,8 @@
   <img alt="Mastodon" src="./lib/assets/wordmark.light.png?raw=true" height="34">
 </picture></h1>
 
-[![GitHub release](https://img.shields.io/github/release/cbrgm/mastodon-github-action.svg)][releases]
+[![GitHub release](https://img.shields.io/github/release/cbrgm/mastodon-github-action.svg)](https://github.com/cbrgm/mastodon-github-action)
+[![Publish](https://github.com/cbrgm/mastodon-github-action/actions/workflows/publish.yaml/badge.svg)](https://github.com/cbrgm/mastodon-github-action/actions/workflows/publish.yaml)
 
 Use this action to send a toot (message) from a GitHub actions workflow to Mastodon.
 
