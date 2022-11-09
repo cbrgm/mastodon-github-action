@@ -1,0 +1,17 @@
+name: 'mastodon-send'
+description: 'Post a toot to Mastodon during a GitHub Actions workflow.'
+inputs:
+  message:
+    description: 'The toot (message) content to be posted.'
+    required: true
+  visibility:
+    description: 'Message visibility level.'
+    required: false
+outputs:
+  ts:
+    description: 'The timestamp of the message that was posted to Mastodon'
+  url:
+    description: 'The url to the toot if present'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
