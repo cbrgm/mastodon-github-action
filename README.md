@@ -1,5 +1,13 @@
 # Mastodon Send GitHub Action
 
+<h1><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./lib/assets/wordmark.dark.png?raw=true">
+  <source media="(prefers-color-scheme: light)" srcset="./lib/assets/wordmark.light.png?raw=true">
+  <img alt="Mastodon" src="./lib/assets/wordmark.light.png?raw=true" height="34">
+</picture></h1>
+
+[![GitHub release](https://img.shields.io/github/release/cbrgm/mastodon-github-action.svg)][releases]
+
 Use this action to send a toot (message) from a GitHub actions workflow to Mastodon.
 
 ## Workflow Usage
