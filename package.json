@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint .",
+    "format": "prettier --write **/*.js",
     "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
   },
   "repository": {
