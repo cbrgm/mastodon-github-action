@@ -26,7 +26,7 @@ Use the following step in your GitHub Actions Workflow:
 
 - name: Send toot to Mastodon
   id: mastodon
-  uses: cbrgm/mastodon-github-action@v1.0.0
+  uses: cbrgm/mastodon-github-action@v1
   with:
     message: "Hello from GitHub Actions!"
     visibility: "public" # default: public
