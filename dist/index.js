@@ -23148,11 +23148,11 @@ var login = function (config) { return __awaiter(void 0, void 0, void 0, functio
 
 
 // Visibility of the posted status. Enumerable oneOf public, unlisted, private, direct.
-const VISIBILITY_OPTIONS = {
+const VISIBILITY_LEVEL = {
   DIRECT: "direct",
   PUBLIC: "public",
   UNLISTED: "unlisted",
-  FOLLOWERS_ONLY: "followers_only",
+  FOLLOWERS_ONLY: "private",
 };
 
 async function mastodonSend(core) {
@@ -23182,15 +23182,15 @@ async function mastodonSend(core) {
 
     // in case visibility is undefined, we will set "public" as a default value
     if (!visibility) {
-      visibility = VISIBILITY_OPTIONS.PUBLIC;
+      visibility = VISIBILITY_LEVEL.PUBLIC;
     }
 
     // check whether visibility has an allowed value
     const allowedVisibilities = [
-      VISIBILITY_OPTIONS.DIRECT,
-      VISIBILITY_OPTIONS.PUBLIC,
-      VISIBILITY_OPTIONS.UNLISTED,
-      VISIBILITY_OPTIONS.FOLLOWERS_ONLY,
+      VISIBILITY_LEVEL.DIRECT,
+      VISIBILITY_LEVEL.PUBLIC,
+      VISIBILITY_LEVEL.UNLISTED,
+      VISIBILITY_LEVEL.FOLLOWERS_ONLY,
     ];
     if (!allowedVisibilities.includes(visibility)) {
       throw new Error(
@@ -23218,7 +23218,7 @@ async function mastodonSend(core) {
 
     // outputs
     const time = new Date().toTimeString();
-    console.log("Toot posted!");
+    console.log("Toot successfully published!");
     core.setOutput("ts", time);
     core.setOutput("url", result.url);
   } catch (err) {
