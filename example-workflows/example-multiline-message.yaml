@@ -11,7 +11,7 @@ jobs:
 
     - name: Send toot to Mastodon
       id: mastodon
-      uses: cbrgm/mastodon-github-action@v1.0.0
+      uses: cbrgm/mastodon-github-action@v1
       with:
         message: |
           #Mastodon these days really has some early twitter vibes!
