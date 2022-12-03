@@ -16880,7 +16880,7 @@ var external_url_ = __nccwpck_require__(7310);
 
 
 
-/* harmony default export */ const classes_URLSearchParams = (external_url_.URLSearchParams);
+/* harmony default export */ const URLSearchParams = (external_url_.URLSearchParams);
 
 ;// CONCATENATED MODULE: ./node_modules/axios/lib/platform/node/classes/FormData.js
 
@@ -16894,7 +16894,7 @@ var external_url_ = __nccwpck_require__(7310);
 /* harmony default export */ const node = ({
   isNode: true,
   classes: {
-    URLSearchParams: classes_URLSearchParams,
+    URLSearchParams: URLSearchParams,
     FormData: node_classes_FormData,
     Blob: typeof Blob !== 'undefined' && Blob || null
   },
@@ -19788,14 +19788,11 @@ const {
 
 // EXTERNAL MODULE: ./node_modules/change-case/dist/index.js
 var dist = __nccwpck_require__(9091);
-;// CONCATENATED MODULE: external "querystring"
-const external_querystring_namespaceObject = require("querystring");
 // EXTERNAL MODULE: ./node_modules/eventemitter3/index.js
 var eventemitter3 = __nccwpck_require__(1848);
 // EXTERNAL MODULE: ./node_modules/isomorphic-ws/node.js
 var isomorphic_ws_node = __nccwpck_require__(4713);
 ;// CONCATENATED MODULE: ./node_modules/masto/dist/index.mjs
-
 
 
 
@@ -19960,113 +19957,214 @@ function __asyncValues(o) {
  */
 var MastoError = /** @class */ (function (_super) {
     __extends(MastoError, _super);
-    function MastoError(
-    /** The error message. Equivalent for the `error` field from the Error entity */
-    message, 
-    /** HTTP status code */
-    statusCode, 
-    /** A longer description of the error, mainly provided with the OAuth API. */
-    description, 
-    /** Used by /api/v1/accounts */
-    details) {
-        var _this = _super.call(this) || this;
-        _this.message = message;
-        _this.statusCode = statusCode;
-        _this.description = description;
-        _this.details = details;
+    /**
+     * @param message The error message. Equivalent for the `error` field from the Error entity
+     * @param props Additional properties
+     */
+    function MastoError(message, props) {
+        if (props === void 0) { props = {}; }
+        var _this = _super.call(this, message, { cause: props.cause }) || this;
+        _this.name = 'MastoError';
         /** Helper to check if the error has been thrown from Masto */
         _this.isMastoError = true;
+        _this.description = props.description;
+        _this.details = props.details;
         return _this;
     }
     return MastoError;
 }(Error));
 
-/**
- * Mastodon forbidden error
- */
-var MastoForbiddenError = /** @class */ (function (_super) {
-    __extends(MastoForbiddenError, _super);
-    function MastoForbiddenError(message, description, details) {
-        var _this = _super.call(this, message, 403, description, details) || this;
-        _this.name = 'MastoForbiddenError';
+var MastoHttpError = /** @class */ (function (_super) {
+    __extends(MastoHttpError, _super);
+    function MastoHttpError(message, statusCode, props) {
+        var _this = _super.call(this, message, props) || this;
+        _this.name = 'MastoHttpError';
+        _this.statusCode = statusCode;
         return _this;
     }
-    return MastoForbiddenError;
+    return MastoHttpError;
 }(MastoError));
 
 /**
  * Mastodon forbidden error
  */
-var MastoConflictError = /** @class */ (function (_super) {
-    __extends(MastoConflictError, _super);
-    function MastoConflictError(message, description, details) {
-        var _this = _super.call(this, message, 409, description, details) || this;
-        _this.message = message;
-        _this.description = description;
-        _this.details = details;
-        _this.name = 'MastoConflictError';
+var MastoHttpConflictError = /** @class */ (function (_super) {
+    __extends(MastoHttpConflictError, _super);
+    function MastoHttpConflictError(message, props) {
+        var _this = _super.call(this, message, 409, props) || this;
+        _this.name = 'MastoHttpConflictError';
         return _this;
     }
-    return MastoConflictError;
-}(MastoError));
+    return MastoHttpConflictError;
+}(MastoHttpError));
+/**
+ * @deprecated Will be removed in v5
+ */
+var MastoConflictError = (/* unused pure expression or super */ null && (MastoHttpConflictError));
 
 /**
- * Mastodon not found error class
+ * Mastodon forbidden error
  */
-var MastoNotFoundError = /** @class */ (function (_super) {
-    __extends(MastoNotFoundError, _super);
-    function MastoNotFoundError(message, description, details) {
-        var _this = _super.call(this, message, 404, description, details) || this;
-        _this.name = 'MastoNotFoundError';
+var MastoHttpForbiddenError = /** @class */ (function (_super) {
+    __extends(MastoHttpForbiddenError, _super);
+    function MastoHttpForbiddenError(message, props) {
+        var _this = _super.call(this, message, 403, props) || this;
+        _this.name = 'MastoHttpForbiddenError';
         return _this;
     }
-    return MastoNotFoundError;
-}(MastoError));
-
+    return MastoHttpForbiddenError;
+}(MastoHttpError));
 /**
- * Mastodon rate limit error class
- * @param message Message for users
+ * @deprecated Will be removed in v5
  */
-var MastoRateLimitError = /** @class */ (function (_super) {
-    __extends(MastoRateLimitError, _super);
-    function MastoRateLimitError(message, 
-    /** Number of requests permitted per time period */
-    limit, 
-    /** Number of requests you can still make */
-    remaining, 
-    /** Timestamp when your rate limit will reset */
-    reset, description, details) {
-        var _this = _super.call(this, message, 429, description, details) || this;
-        _this.limit = limit;
-        _this.remaining = remaining;
-        _this.reset = reset;
-        _this.name = 'MastoRateLimitError';
-        return _this;
-    }
-    return MastoRateLimitError;
-}(MastoError));
+var MastoForbiddenError = (/* unused pure expression or super */ null && (MastoHttpForbiddenError));
 
 /**
  * Mastodon gone error
  */
-var MastoGoneError = /** @class */ (function (_super) {
-    __extends(MastoGoneError, _super);
-    function MastoGoneError(message, description, details) {
-        var _this = _super.call(this, message, 410, description, details) || this;
-        _this.name = 'MastoGoneError';
+var MastoHttpGoneError = /** @class */ (function (_super) {
+    __extends(MastoHttpGoneError, _super);
+    function MastoHttpGoneError(message, props) {
+        var _this = _super.call(this, message, 410, props) || this;
+        _this.name = 'MastoHttpGoneError';
         return _this;
     }
-    return MastoGoneError;
+    return MastoHttpGoneError;
+}(MastoHttpError));
+/**
+ * @deprecated Will be removed in v5
+ */
+var MastoGoneError = (/* unused pure expression or super */ null && (MastoHttpGoneError));
+
+/**
+ * Mastodon not found error class
+ */
+var MastoHttpNotFoundError = /** @class */ (function (_super) {
+    __extends(MastoHttpNotFoundError, _super);
+    function MastoHttpNotFoundError(message, props) {
+        var _this = _super.call(this, message, 404, props) || this;
+        _this.name = 'MastoNotFoundError';
+        return _this;
+    }
+    return MastoHttpNotFoundError;
+}(MastoHttpError));
+/**
+ * @deprecated Will be removed in v5
+ */
+var MastoNotFoundError = (/* unused pure expression or super */ null && (MastoHttpNotFoundError));
+
+/**
+ * Mastodon rate limit error class
+ */
+var MastoHttpRateLimitError = /** @class */ (function (_super) {
+    __extends(MastoHttpRateLimitError, _super);
+    function MastoHttpRateLimitError(message, props) {
+        var _this = _super.call(this, message, 429, props) || this;
+        _this.name = 'MastoRateLimitError';
+        _this.limit = props === null || props === void 0 ? void 0 : props.limit;
+        _this.remaining = props === null || props === void 0 ? void 0 : props.remaining;
+        _this.reset = props === null || props === void 0 ? void 0 : props.reset;
+        return _this;
+    }
+    return MastoHttpRateLimitError;
+}(MastoHttpError));
+/**
+ * @deprecated Will be removed in v5
+ */
+var MastoRateLimitError = (/* unused pure expression or super */ null && (MastoHttpRateLimitError));
+
+/**
+ * Mastodon unauthorized error class
+ */
+var MastoHttpUnauthorizedError = /** @class */ (function (_super) {
+    __extends(MastoHttpUnauthorizedError, _super);
+    function MastoHttpUnauthorizedError(message, props) {
+        var _this = _super.call(this, message, 401, props) || this;
+        _this.name = 'MastoUnauthorizedError';
+        return _this;
+    }
+    return MastoHttpUnauthorizedError;
+}(MastoHttpError));
+/**
+ * @deprecated Will be removed in v5
+ */
+var MastoUnauthorizedError = (/* unused pure expression or super */ null && (MastoHttpUnauthorizedError));
+
+/**
+ * Mastodon unprocessable entity
+ */
+var MastoHttpUnprocessableEntityError = /** @class */ (function (_super) {
+    __extends(MastoHttpUnprocessableEntityError, _super);
+    function MastoHttpUnprocessableEntityError(message, props) {
+        var _this = _super.call(this, message, 422, props) || this;
+        _this.name = 'MastoHttpUnprocessableEntityError';
+        return _this;
+    }
+    return MastoHttpUnprocessableEntityError;
+}(MastoHttpError));
+/**
+ * @deprecated Will be removed in v5
+ */
+var MastoUnprocessableEntityError = (/* unused pure expression or super */ null && (MastoHttpUnprocessableEntityError));
+
+var createError = function (params) {
+    var _a, _b;
+    var message = (_a = params.message) !== null && _a !== void 0 ? _a : 'Unexpected error occurred';
+    var props = {
+        cause: params.cause,
+        description: (_b = params.description) !== null && _b !== void 0 ? _b : 'No further description is provided for this error',
+        details: params.details,
+    };
+    switch (params.statusCode) {
+        case 401: {
+            return new MastoHttpUnauthorizedError(message, props);
+        }
+        case 403: {
+            return new MastoHttpForbiddenError(message, props);
+        }
+        case 404: {
+            return new MastoHttpNotFoundError(message, props);
+        }
+        case 409: {
+            return new MastoHttpConflictError(message, props);
+        }
+        case 410: {
+            return new MastoHttpGoneError(message, props);
+        }
+        case 422: {
+            return new MastoHttpUnprocessableEntityError(message, props);
+        }
+        case 429: {
+            return new MastoHttpRateLimitError(message, __assign(__assign({}, props), { limit: params.limit, remaining: params.remaining, reset: params.reset }));
+        }
+        default: {
+            return new MastoHttpError(message, params.statusCode, props);
+        }
+    }
+};
+
+/**
+ * Mastodon Deserialize error
+ */
+var MastoDeserializeError = /** @class */ (function (_super) {
+    __extends(MastoDeserializeError, _super);
+    function MastoDeserializeError(message, contentType, data, props) {
+        var _this = _super.call(this, message, props) || this;
+        _this.contentType = contentType;
+        _this.data = data;
+        _this.name = 'MastoDeserializeError';
+        return _this;
+    }
+    return MastoDeserializeError;
 }(MastoError));
 
 /**
  * Mastodon Timeout error
- * @param message Message for users
  */
 var MastoTimeoutError = /** @class */ (function (_super) {
     __extends(MastoTimeoutError, _super);
-    function MastoTimeoutError(message, description, details) {
-        var _this = _super.call(this, message, undefined, description, details) || this;
+    function MastoTimeoutError(message, props) {
+        var _this = _super.call(this, message, props) || this;
         _this.name = 'MastoTimeoutError';
         return _this;
     }
@@ -20074,57 +20172,17 @@ var MastoTimeoutError = /** @class */ (function (_super) {
 }(MastoError));
 
 /**
- * Mastodon unauthorized error class
- * @param message Message for users
+ * Mastodon version error
  */
-var MastoUnauthorizedError = /** @class */ (function (_super) {
-    __extends(MastoUnauthorizedError, _super);
-    function MastoUnauthorizedError(message, description, details) {
-        var _this = _super.call(this, message, 401, description, details) || this;
-        _this.name = 'MastoUnauthorizedError';
+var MastoVersionError = /** @class */ (function (_super) {
+    __extends(MastoVersionError, _super);
+    function MastoVersionError(message, props) {
+        var _this = _super.call(this, message, props) || this;
+        _this.name = 'MastoVersionError';
         return _this;
     }
-    return MastoUnauthorizedError;
+    return MastoVersionError;
 }(MastoError));
-
-/**
- * Mastodon unprocessable entity
- * @param message Message for users
- */
-var MastoUnprocessableEntityError = /** @class */ (function (_super) {
-    __extends(MastoUnprocessableEntityError, _super);
-    function MastoUnprocessableEntityError(message, description, details) {
-        var _this = _super.call(this, message, 422, description, details) || this;
-        _this.name = 'MastoUnprocessableEntityError';
-        return _this;
-    }
-    return MastoUnprocessableEntityError;
-}(MastoError));
-
-var createError = function (params) {
-    var _a, _b;
-    var message = (_a = params.message) !== null && _a !== void 0 ? _a : 'Unexpected error occurred';
-    var description = (_b = params.description) !== null && _b !== void 0 ? _b : 'No description provided for this error';
-    var args = [message, description, params.details];
-    switch (params.statusCode) {
-        case 401:
-            return new (MastoUnauthorizedError.bind.apply(MastoUnauthorizedError, __spreadArray([void 0], args, false)))();
-        case 403:
-            return new (MastoForbiddenError.bind.apply(MastoForbiddenError, __spreadArray([void 0], args, false)))();
-        case 404:
-            return new (MastoNotFoundError.bind.apply(MastoNotFoundError, __spreadArray([void 0], args, false)))();
-        case 409:
-            return new (MastoConflictError.bind.apply(MastoConflictError, __spreadArray([void 0], args, false)))();
-        case 410:
-            return new (MastoGoneError.bind.apply(MastoGoneError, __spreadArray([void 0], args, false)))();
-        case 422:
-            return new (MastoUnprocessableEntityError.bind.apply(MastoUnprocessableEntityError, __spreadArray([void 0], args, false)))();
-        case 429:
-            return new MastoRateLimitError(message, params.limit, params.remaining, params.reset, description);
-        default:
-            return new MastoError(message, params.statusCode, description, params.details);
-    }
-};
 
 /**
  * Decorator that verifies the version of the Mastodon instance
@@ -20135,7 +20193,7 @@ var version = function (_a) {
     return function (_target, name, descriptor) {
         var origin = descriptor.value;
         if (!origin) {
-            throw new Error('version can only apply to a method of a class');
+            throw new MastoError('version can only apply to a method of a class');
         }
         descriptor.value = function () {
             var args = [];
@@ -20146,14 +20204,16 @@ var version = function (_a) {
                 return origin.apply(this, args);
             }
             if (since && semver.lt(this.version, since, { loose: true })) {
-                throw new MastoNotFoundError("".concat(String(name), " is not available with the current ") +
-                    "Mastodon version ".concat(this.version, ". ") +
-                    "It requires greater than or equal to version ".concat(since, "."));
+                throw new MastoVersionError("".concat(String(this.constructor.name), ".").concat(String(name)) +
+                    " is not available with the current Mastodon version " +
+                    this.version +
+                    " It requires greater than or equal to version ".concat(since, "."));
             }
             if (until && semver.gt(this.version, until, { loose: true })) {
-                throw new MastoNotFoundError("".concat(String(name), " is not available with the current ") +
-                    "Mastodon version ".concat(this.version, ". ") +
-                    "It was removed on version ".concat(until, "."));
+                throw new MastoVersionError("".concat(String(this.constructor.name), ".").concat(String(name)) +
+                    " is not available with the current Mastodon version" +
+                    this.version +
+                    " It was removed on version ".concat(until, "."));
             }
             return origin.apply(this, args);
         };
@@ -20167,7 +20227,8 @@ var Paginator = /** @class */ (function () {
         this.initialParams = initialParams;
         this.pluckNext = function (link) {
             var _a;
-            return (_a = link === null || link === void 0 ? void 0 : link.match(/<(.+?)>; rel="next"/)) === null || _a === void 0 ? void 0 : _a[1];
+            return (_a = link
+                .match(/<(.+?)>; rel="next"/)) === null || _a === void 0 ? void 0 : _a[1].replace(/^https?:\/\/[^/]+/, '');
         };
         this.nextUrl = initialUrl;
         this.nextParams = initialParams;
@@ -20179,18 +20240,22 @@ var Paginator = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        if (this.nextUrl == null) {
-                            return [2 /*return*/, { done: true, value: null }];
+                        if (this.nextUrl == undefined) {
+                            return [2 /*return*/, { done: true, value: undefined }];
                         }
                         return [4 /*yield*/, this.http.request({
                                 method: 'get',
                                 // if no params specified, use link header
                                 url: params ? this.initialUrl : this.nextUrl,
-                                data: params !== null && params !== void 0 ? params : this.nextParams,
+                                params: params !== null && params !== void 0 ? params : this.nextParams,
                             })];
                     case 1:
                         response = _b.sent();
-                        this.nextUrl = this.pluckNext((_a = response.headers) === null || _a === void 0 ? void 0 : _a.link);
+                        this.nextUrl =
+                            typeof ((_a = response.headers) === null || _a === void 0 ? void 0 : _a.link) === 'string'
+                                ? this.pluckNext(response.headers.link)
+                                : undefined;
+                        this.nextParams = {};
                         return [2 /*return*/, {
                                 done: false,
                                 value: response.data,
@@ -20233,7 +20298,23 @@ var AccountRepository$1 = /** @class */ (function () {
         this.http = http;
         this.version = version;
         this.config = config;
+        /** @deprecated Use `iterateFollowers` */
+        this.getFollowersIterable = this.iterateFollowers.bind(this);
+        /** @deprecated Use `iterateFollowing` */
+        this.getFollowingIterable = this.iterateFollowing.bind(this);
+        /** @deprecated Use `iterateStatuses` */
+        this.getStatusesIterable = this.iterateStatuses.bind(this);
     }
+    AccountRepository.prototype.iterateFollowers = function (id, params) {
+        return new Paginator(this.http, "/api/v1/accounts/".concat(id, "/followers"), params);
+    };
+    AccountRepository.prototype.iterateFollowing = function (id, params) {
+        return new Paginator(this.http, "/api/v1/accounts/".concat(id, "/following"), params);
+    };
+    AccountRepository.prototype.iterateStatuses = function (id, params) {
+        return new Paginator(this.http, "/api/v1/accounts/".concat(id, "/statuses"), params);
+    };
+    // ====
     /**
      * View information about a profile.
      * @param id The id of the account in the database
@@ -20280,8 +20361,9 @@ var AccountRepository$1 = /** @class */ (function () {
      * @return Array of Account
      * @see https://docs.joinmastodon.org/methods/accounts/
      */
-    AccountRepository.prototype.getFollowersIterable = function (id, params) {
-        return new Paginator(this.http, "/api/v1/accounts/".concat(id, "/followers"), params);
+    AccountRepository.prototype.fetchFollowers = function (id, params) {
+        if (params === void 0) { params = {}; }
+        return this.iterateFollowers(id, params).next();
     };
     /**
      * Accounts which the given account is following, if network is not hidden by the account owner.
@@ -20290,8 +20372,9 @@ var AccountRepository$1 = /** @class */ (function () {
      * @return Array of Account
      * @see https://docs.joinmastodon.org/methods/accounts/
      */
-    AccountRepository.prototype.getFollowingIterable = function (id, params) {
-        return new Paginator(this.http, "/api/v1/accounts/".concat(id, "/following"), params);
+    AccountRepository.prototype.fetchFollowing = function (id, params) {
+        if (params === void 0) { params = {}; }
+        return this.iterateFollowing(id, params).next();
     };
     /**
      * Statuses posted to the given account.
@@ -20300,8 +20383,9 @@ var AccountRepository$1 = /** @class */ (function () {
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/accounts/
      */
-    AccountRepository.prototype.getStatusesIterable = function (id, params) {
-        return new Paginator(this.http, "/api/v1/accounts/".concat(id, "/statuses"), params);
+    AccountRepository.prototype.fetchStatuses = function (id, params) {
+        if (params === void 0) { params = {}; }
+        return this.iterateStatuses(id, params).next();
     };
     /**
      * Follow the given account.
@@ -20456,6 +20540,15 @@ var AccountRepository$1 = /** @class */ (function () {
     };
     __decorate([
         version({ since: '0.0.0' })
+    ], AccountRepository.prototype, "iterateFollowers", null);
+    __decorate([
+        version({ since: '0.0.0' })
+    ], AccountRepository.prototype, "iterateFollowing", null);
+    __decorate([
+        version({ since: '0.0.0' })
+    ], AccountRepository.prototype, "iterateStatuses", null);
+    __decorate([
+        version({ since: '0.0.0' })
     ], AccountRepository.prototype, "fetch", null);
     __decorate([
         version({ since: '2.7.0' })
@@ -20466,15 +20559,6 @@ var AccountRepository$1 = /** @class */ (function () {
     __decorate([
         version({ since: '0.0.0' })
     ], AccountRepository.prototype, "updateCredentials", null);
-    __decorate([
-        version({ since: '0.0.0' })
-    ], AccountRepository.prototype, "getFollowersIterable", null);
-    __decorate([
-        version({ since: '0.0.0' })
-    ], AccountRepository.prototype, "getFollowingIterable", null);
-    __decorate([
-        version({ since: '0.0.0' })
-    ], AccountRepository.prototype, "getStatusesIterable", null);
     __decorate([
         version({ since: '0.0.0' })
     ], AccountRepository.prototype, "follow", null);
@@ -20537,7 +20621,7 @@ var deprecated = function (message) {
     return function (_target, name, descriptor) {
         var origin = descriptor.value;
         if (!origin) {
-            throw new Error('deprecated can only apply to a method of a class');
+            throw new MastoError('deprecated can only apply to a method of a class');
         }
         descriptor.value = function () {
             var _a;
@@ -20683,6 +20767,7 @@ var AnnouncementRepository = /** @class */ (function () {
     /**
      * Fetch announcements
      * @return Announcements
+     * @see https://docs.joinmastodon.org/methods/announcements/
      */
     AnnouncementRepository.prototype.fetchAll = function () {
         return this.http.get('/api/v1/announcements');
@@ -20691,6 +20776,7 @@ var AnnouncementRepository = /** @class */ (function () {
      * Dismiss announcement
      * @param id ID of the announcement
      * @return Nothing
+     * @see https://docs.joinmastodon.org/methods/announcements/
      */
     AnnouncementRepository.prototype.dismiss = function (id) {
         return this.http.post("/api/v1/announcements/".concat(id, "/dismiss"));
@@ -20699,7 +20785,8 @@ var AnnouncementRepository = /** @class */ (function () {
      * Add a reaction to an announcement
      * @param id ID of the announcement
      * @param name Emoji string
-     * @return Announcement
+     * @return N/A
+     * @see https://docs.joinmastodon.org/methods/announcements/
      */
     AnnouncementRepository.prototype.addReaction = function (id, name) {
         return this.http.put("/api/v1/announcements/".concat(id, "/reactions/").concat(name));
@@ -20708,7 +20795,8 @@ var AnnouncementRepository = /** @class */ (function () {
      * Remove a reaction from an announcement
      * @param id ID of the announcement
      * @param name Emoji string
-     * @return Announcement
+     * @return N/A
+     * @see https://docs.joinmastodon.org/methods/announcements/
      */
     AnnouncementRepository.prototype.removeReaction = function (id, name) {
         return this.http.delete("/api/v1/announcements/".concat(id, "/reactions/").concat(name));
@@ -20760,100 +20848,101 @@ var AppRepository = /** @class */ (function () {
     return AppRepository;
 }());
 
-var BlockRepository = /** @class */ (function () {
-    function BlockRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+var IterableRepository = /** @class */ (function () {
+    function IterableRepository() {
+        /** @deprecated Use `iterate` instead */
+        this.getIterator = this.iterate.bind(this);
     }
-    BlockRepository.prototype[Symbol.asyncIterator] = function () {
+    IterableRepository.prototype.fetchMany = function (params) {
+        return this.iterate(params).next();
+    };
+    IterableRepository.prototype[Symbol.asyncIterator] = function () {
         return __asyncGenerator(this, arguments, function _a() {
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
+                    case 0:
+                        if (!(this.iterate == undefined)) return [3 /*break*/, 3];
+                        return [5 /*yield**/, __values(__asyncDelegator(__asyncValues([])))];
                     case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
                     case 2:
+                        _b.sent();
+                        _b.label = 3;
+                    case 3: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.iterate())))];
+                    case 4: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
+                    case 5:
                         _b.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
+    return IterableRepository;
+}());
+
+var BlockRepository = /** @class */ (function (_super) {
+    __extends(BlockRepository, _super);
+    function BlockRepository(http, version, config) {
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
+    }
     /**
      * Blocked users
      * @param params Array of Account
      * @return Query parameter
      * @see https://docs.joinmastodon.org/methods/accounts/blocks/
      */
-    BlockRepository.prototype.getIterator = function (params) {
+    BlockRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, "/api/v1/blocks", params);
     };
     __decorate([
         version({ since: '0.0.0' })
-    ], BlockRepository.prototype, "getIterator", null);
+    ], BlockRepository.prototype, "iterate", null);
     return BlockRepository;
-}());
+}(IterableRepository));
 
-var BookmarkRepository = /** @class */ (function () {
+var BookmarkRepository = /** @class */ (function (_super) {
+    __extends(BookmarkRepository, _super);
     function BookmarkRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    BookmarkRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Statuses the user has bookmarked.
      * @param params Parameters
      * @return Array of Statuses
      * @see https://docs.joinmastodon.org/methods/accounts/bookmarks/
      */
-    BookmarkRepository.prototype.getIterator = function (params) {
+    BookmarkRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, '/api/v1/bookmarks', params);
     };
     __decorate([
         version({ since: '3.1.0' })
-    ], BookmarkRepository.prototype, "getIterator", null);
+    ], BookmarkRepository.prototype, "iterate", null);
     return BookmarkRepository;
-}());
+}(IterableRepository));
 
-var ConversationRepository = /** @class */ (function () {
+var ConversationRepository = /** @class */ (function (_super) {
+    __extends(ConversationRepository, _super);
     function ConversationRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    ConversationRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Show conversation
      * @param params Parameters
      * @return Array of Conversation
      * @see https://docs.joinmastodon.org/methods/timelines/conversations/
      */
-    ConversationRepository.prototype.getIterator = function (params) {
+    ConversationRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, '/api/v1/conversations', params);
     };
     /**
@@ -20876,7 +20965,7 @@ var ConversationRepository = /** @class */ (function () {
     };
     __decorate([
         version({ since: '2.6.0' })
-    ], ConversationRepository.prototype, "getIterator", null);
+    ], ConversationRepository.prototype, "iterate", null);
     __decorate([
         version({ since: '2.6.0' })
     ], ConversationRepository.prototype, "remove", null);
@@ -20884,7 +20973,7 @@ var ConversationRepository = /** @class */ (function () {
         version({ since: '2.6.0' })
     ], ConversationRepository.prototype, "read", null);
     return ConversationRepository;
-}());
+}(IterableRepository));
 
 var CustomEmojiRepository = /** @class */ (function () {
     function CustomEmojiRepository(http, version, config) {
@@ -20927,32 +21016,22 @@ var DirectoryRepository = /** @class */ (function () {
     return DirectoryRepository;
 }());
 
-var DomainBlockRepository = /** @class */ (function () {
+var DomainBlockRepository = /** @class */ (function (_super) {
+    __extends(DomainBlockRepository, _super);
     function DomainBlockRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    DomainBlockRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * View domains the user has blocked.
      * @param params Parameters
      * @return Array of strings
      * @see https://docs.joinmastodon.org/methods/accounts/domain_blocks/
      */
-    DomainBlockRepository.prototype.getIterator = function (params) {
+    DomainBlockRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, "/api/v1/domain_blocks", params);
     };
     /**
@@ -20983,7 +21062,7 @@ var DomainBlockRepository = /** @class */ (function () {
     };
     __decorate([
         version({ since: '1.4.0' })
-    ], DomainBlockRepository.prototype, "getIterator", null);
+    ], DomainBlockRepository.prototype, "iterate", null);
     __decorate([
         version({ since: '1.4.0' })
     ], DomainBlockRepository.prototype, "block", null);
@@ -20991,74 +21070,54 @@ var DomainBlockRepository = /** @class */ (function () {
         version({ since: '1.4.0' })
     ], DomainBlockRepository.prototype, "unblock", null);
     return DomainBlockRepository;
-}());
+}(IterableRepository));
 
-var EndorsementRepository = /** @class */ (function () {
+var EndorsementRepository = /** @class */ (function (_super) {
+    __extends(EndorsementRepository, _super);
     function EndorsementRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    EndorsementRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Accounts that the user is currently featuring on their profile.
      * @return Array of Account
      * @see https://docs.joinmastodon.org/methods/accounts/endorsements/
      */
-    EndorsementRepository.prototype.getIterator = function (params) {
+    EndorsementRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, "/api/v1/endorsements", params);
     };
     __decorate([
         version({ since: '2.5.0' })
-    ], EndorsementRepository.prototype, "getIterator", null);
+    ], EndorsementRepository.prototype, "iterate", null);
     return EndorsementRepository;
-}());
+}(IterableRepository));
 
-var FavouriteRepository = /** @class */ (function () {
+var FavouriteRepository = /** @class */ (function (_super) {
+    __extends(FavouriteRepository, _super);
     function FavouriteRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    FavouriteRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Statuses the user has favourited.
      * @param params Parameters
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/accounts/favourites/
      */
-    FavouriteRepository.prototype.getIterator = function (params) {
+    FavouriteRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, "/api/v1/favourites", params);
     };
     __decorate([
         version({ since: '0.0.0' })
-    ], FavouriteRepository.prototype, "getIterator", null);
+    ], FavouriteRepository.prototype, "iterate", null);
     return FavouriteRepository;
-}());
+}(IterableRepository));
 
 var FeaturedTagRepository = /** @class */ (function () {
     function FeaturedTagRepository(http, version, config) {
@@ -21185,32 +21244,22 @@ var FilterRepository = /** @class */ (function () {
     return FilterRepository;
 }());
 
-var FollowRequestRepository = /** @class */ (function () {
+var FollowRequestRepository = /** @class */ (function (_super) {
+    __extends(FollowRequestRepository, _super);
     function FollowRequestRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    FollowRequestRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Pending Follows
      * @param params Parameters
      * @return Array of Account
      * @see https://docs.joinmastodon.org/methods/accounts/follow_requests/
      */
-    FollowRequestRepository.prototype.getIterator = function (params) {
+    FollowRequestRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, "/api/v1/follow_requests", params);
     };
     /**
@@ -21233,7 +21282,7 @@ var FollowRequestRepository = /** @class */ (function () {
     };
     __decorate([
         version({ since: '0.0.0' })
-    ], FollowRequestRepository.prototype, "getIterator", null);
+    ], FollowRequestRepository.prototype, "iterate", null);
     __decorate([
         version({ since: '0.0.0' })
     ], FollowRequestRepository.prototype, "authorize", null);
@@ -21241,7 +21290,7 @@ var FollowRequestRepository = /** @class */ (function () {
         version({ since: '0.0.0' })
     ], FollowRequestRepository.prototype, "reject", null);
     return FollowRequestRepository;
-}());
+}(IterableRepository));
 
 var InstanceRepository = /** @class */ (function () {
     function InstanceRepository(http, version, config) {
@@ -21290,7 +21339,12 @@ var ListRepository = /** @class */ (function () {
         this.http = http;
         this.version = version;
         this.config = config;
+        /** @deprecated Use `iterateAccounts` instead */
+        this.getAccountIterator = this.iterateAccounts.bind(this);
     }
+    ListRepository.prototype.iterateAccounts = function (id, params) {
+        return new Paginator(this.http, "/api/v1/lists/".concat(id, "/accounts"), params);
+    };
     /**
      * Fetch the list with the given ID. Used for verifying the title of a list.
      * @param id ID of the list in the database
@@ -21343,8 +21397,8 @@ var ListRepository = /** @class */ (function () {
      * @return Array of Account
      * @see https://docs.joinmastodon.org/methods/timelines/lists/
      */
-    ListRepository.prototype.getAccountIterator = function (id, params) {
-        return new Paginator(this.http, "/api/v1/list/".concat(id, "/accounts"), params);
+    ListRepository.prototype.fetchAccounts = function (id, params) {
+        return this.iterateAccounts(id, params).next();
     };
     /**
      * Add accounts to the given list. Note that the user must be following these accounts.
@@ -21368,6 +21422,9 @@ var ListRepository = /** @class */ (function () {
     };
     __decorate([
         version({ since: '2.1.0' })
+    ], ListRepository.prototype, "iterateAccounts", null);
+    __decorate([
+        version({ since: '2.1.0' })
     ], ListRepository.prototype, "fetch", null);
     __decorate([
         version({ since: '2.1.0' })
@@ -21381,9 +21438,6 @@ var ListRepository = /** @class */ (function () {
     __decorate([
         version({ since: '2.1.0' })
     ], ListRepository.prototype, "remove", null);
-    __decorate([
-        version({ since: '2.1.0' })
-    ], ListRepository.prototype, "getAccountIterator", null);
     __decorate([
         version({ since: '2.1.0' })
     ], ListRepository.prototype, "addAccount", null);
@@ -21427,14 +21481,13 @@ var MarkerRepository = /** @class */ (function () {
 }());
 
 var delay = function (ms) {
-    return new Promise(function (resolve) { return setTimeout(function () { return resolve(undefined); }, ms); });
+    return new Promise(function (resolve) { return setTimeout(function () { return resolve(); }, ms); });
 };
 
 var timeout = function (task, ms) { return __awaiter(void 0, void 0, void 0, function () {
     var cancellationToken, timeoutPromise, mainPromise;
     return __generator(this, function (_a) {
-        cancellationToken = null;
-        if (ms == null) {
+        if (ms == undefined) {
             return [2 /*return*/, task];
         }
         timeoutPromise = new Promise(function (_, reject) {
@@ -21469,21 +21522,18 @@ var MediaAttachmentRepository = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        media = null;
-                        _a.label = 1;
-                    case 1:
-                        if (!(media == null)) return [3 /*break*/, 4];
+                        if (!(media == undefined)) return [3 /*break*/, 3];
                         return [4 /*yield*/, delay(interval)];
-                    case 2:
+                    case 1:
                         _a.sent();
                         return [4 /*yield*/, this.fetch(id)];
-                    case 3:
+                    case 2:
                         processing = _a.sent();
-                        if (processing.url != null) {
+                        if (processing.url != undefined) {
                             media = processing;
                         }
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, media];
+                        return [3 /*break*/, 0];
+                    case 3: return [2 /*return*/, media];
                 }
             });
         }); })(), (_a = this.config.timeout) !== null && _a !== void 0 ? _a : 3000);
@@ -21572,59 +21622,39 @@ var MediaAttachmentRepository = /** @class */ (function () {
     return MediaAttachmentRepository;
 }());
 
-var MuteRepository = /** @class */ (function () {
+var MuteRepository = /** @class */ (function (_super) {
+    __extends(MuteRepository, _super);
     function MuteRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    MuteRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Accounts the user has muted.
      * @param params Parameters
      * @return Array of Account
      * @see https://docs.joinmastodon.org/methods/accounts/mutes/
      */
-    MuteRepository.prototype.getIterator = function (params) {
+    MuteRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, '/api/v1/mutes', params);
     };
     __decorate([
         version({ since: '0.0.0' })
-    ], MuteRepository.prototype, "getIterator", null);
+    ], MuteRepository.prototype, "iterate", null);
     return MuteRepository;
-}());
+}(IterableRepository));
 
-var NotificationsRepository = /** @class */ (function () {
+var NotificationsRepository = /** @class */ (function (_super) {
+    __extends(NotificationsRepository, _super);
     function NotificationsRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    NotificationsRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * Notifications concerning the user.
      * This API returns Link headers containing links to the next/previous page.
@@ -21633,7 +21663,7 @@ var NotificationsRepository = /** @class */ (function () {
      * @return Array of Notification
      * @see https://docs.joinmastodon.org/methods/notifications/
      */
-    NotificationsRepository.prototype.getIterator = function (params) {
+    NotificationsRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, '/api/v1/notifications', params);
     };
     /**
@@ -21664,7 +21694,7 @@ var NotificationsRepository = /** @class */ (function () {
     };
     __decorate([
         version({ since: '0.0.0' })
-    ], NotificationsRepository.prototype, "getIterator", null);
+    ], NotificationsRepository.prototype, "iterate", null);
     __decorate([
         version({ since: '0.0.0' })
     ], NotificationsRepository.prototype, "fetch", null);
@@ -21675,7 +21705,7 @@ var NotificationsRepository = /** @class */ (function () {
         version({ since: '2.6.0' })
     ], NotificationsRepository.prototype, "dismiss", null);
     return NotificationsRepository;
-}());
+}(IterableRepository));
 
 var PollRepository = /** @class */ (function () {
     function PollRepository(http, version, config) {
@@ -21809,32 +21839,22 @@ var ReportRepository$1 = /** @class */ (function () {
     return ReportRepository;
 }());
 
-var ScheduledStatusesRepository = /** @class */ (function () {
+var ScheduledStatusesRepository = /** @class */ (function (_super) {
+    __extends(ScheduledStatusesRepository, _super);
     function ScheduledStatusesRepository(http, version, config) {
-        this.http = http;
-        this.version = version;
-        this.config = config;
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
     }
-    ScheduledStatusesRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
     /**
      * View scheduled statuses
      * @param params Parameters
      * @return Array of ScheduledStatus
      * @see https://docs.joinmastodon.org/methods/statuses/scheduled_statuses/
      */
-    ScheduledStatusesRepository.prototype.getIterator = function (params) {
+    ScheduledStatusesRepository.prototype.iterate = function (params) {
         return new Paginator(this.http, '/api/v1/scheduled_statuses', params);
     };
     /**
@@ -21867,7 +21887,7 @@ var ScheduledStatusesRepository = /** @class */ (function () {
     };
     __decorate([
         version({ since: '2.7.0' })
-    ], ScheduledStatusesRepository.prototype, "getIterator", null);
+    ], ScheduledStatusesRepository.prototype, "iterate", null);
     __decorate([
         version({ since: '2.7.0' })
     ], ScheduledStatusesRepository.prototype, "fetch", null);
@@ -21878,7 +21898,7 @@ var ScheduledStatusesRepository = /** @class */ (function () {
         version({ since: '2.7.0' })
     ], ScheduledStatusesRepository.prototype, "remove", null);
     return ScheduledStatusesRepository;
-}());
+}(IterableRepository));
 
 var StatusRepository = /** @class */ (function () {
     function StatusRepository(http, version, config) {
@@ -22131,21 +22151,14 @@ var SuggestionRepository = /** @class */ (function () {
         this.version = version;
         this.config = config;
     }
-    SuggestionRepository.prototype[Symbol.asyncIterator] = function () {
-        return __asyncGenerator(this, arguments, function _a() {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [5 /*yield**/, __values(__asyncDelegator(__asyncValues(this.getIterator())))];
-                    case 1: return [4 /*yield*/, __await.apply(void 0, [_b.sent()])];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    SuggestionRepository.prototype.getIterator = function (params) {
-        return new Paginator(this.http, "/api/v1/blocks", params);
+    /**
+     * View follow suggestions.
+     * Accounts that are promoted by staff, or that the user has had past positive interactions with, but is not yet following.
+     * @param params
+     * @returns
+     */
+    SuggestionRepository.prototype.fetchAll = function (params) {
+        return this.http.get('/api/v2/suggestions', params);
     };
     /**
      * Remove an account from follow suggestions.
@@ -22167,29 +22180,62 @@ var TimelinesRepository = /** @class */ (function () {
         this.http = http;
         this.version = version;
         this.config = config;
+        // ====
+        /** @deprecated Use `iterateHashtag` instead. */
+        this.getTagIterable = this.iterateHashtag.bind(this);
+        /** @deprecated Use `iterateList` instead. */
+        this.getList = this.iterateList.bind(this);
+        /** @deprecated Use `iterateDirect` instead. */
+        this.getDirect = this.iterateDirect.bind(this);
+        /** @deprecated Use `iterateHome` instead` */
+        this.getHomeIterable = this.iterateHome.bind(this);
+        /** @deprecated Use `iteratePublic` instead` */
+        this.getPublicIterable = this.iteratePublic.bind(this);
+        /** @deprecated Use `iterateHashtag` instead` */
+        this.getHashtagIterable = this.iterateHashtag.bind(this);
+        /** @deprecated Use `iterateList` instead` */
+        this.getListIterable = this.iterateList.bind(this);
+        /** @deprecated Use `iterateDirect` instead` */
+        this.getDirectIterable = this.iterateDirect.bind(this);
     }
+    TimelinesRepository.prototype.iterateHome = function (params) {
+        return new Paginator(this.http, '/api/v1/timelines/home', params);
+    };
+    TimelinesRepository.prototype.iteratePublic = function (params) {
+        return new Paginator(this.http, '/api/v1/timelines/public', params);
+    };
+    TimelinesRepository.prototype.iterateHashtag = function (hashtag, params) {
+        return new Paginator(this.http, "/api/v1/timelines/tag/".concat(hashtag), params);
+    };
+    TimelinesRepository.prototype.iterateList = function (id, params) {
+        return new Paginator(this.http, "/api/v1/timelines/list/".concat(id), params);
+    };
+    TimelinesRepository.prototype.iterateDirect = function (params) {
+        return new Paginator(this.http, '/api/v1/timelines/direct', params);
+    };
     Object.defineProperty(TimelinesRepository.prototype, "home", {
         get: function () {
-            return this.getHomeIterable();
+            return this.iterateHome();
         },
         enumerable: false,
         configurable: true
     });
     Object.defineProperty(TimelinesRepository.prototype, "public", {
         get: function () {
-            return this.getPublicIterable();
+            return this.iteratePublic();
         },
         enumerable: false,
         configurable: true
     });
+    // ====
     /**
      * View statuses from followed users.
      * @param params Parameters
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/timelines/
      */
-    TimelinesRepository.prototype.getHomeIterable = function (params) {
-        return new Paginator(this.http, '/api/v1/timelines/home', params);
+    TimelinesRepository.prototype.fetchHome = function (params) {
+        return this.iterateHome(params).next();
     };
     /**
      * Public timeline
@@ -22197,8 +22243,8 @@ var TimelinesRepository = /** @class */ (function () {
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/timelines/
      */
-    TimelinesRepository.prototype.getPublicIterable = function (params) {
-        return new Paginator(this.http, '/api/v1/timelines/public', params);
+    TimelinesRepository.prototype.fetchPublic = function (params) {
+        return this.iteratePublic(params).next();
     };
     /**
      * View public statuses containing the given hashtag.
@@ -22207,8 +22253,8 @@ var TimelinesRepository = /** @class */ (function () {
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/timelines/
      */
-    TimelinesRepository.prototype.getTagIterable = function (hashtag, params) {
-        return new Paginator(this.http, "/api/v1/timelines/tag/".concat(hashtag), params);
+    TimelinesRepository.prototype.fetchHashtag = function (hashtag, params) {
+        return this.iterateHashtag(hashtag, params).next();
     };
     /**
      * View statuses in the given list timeline.
@@ -22217,8 +22263,8 @@ var TimelinesRepository = /** @class */ (function () {
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/timelines/
      */
-    TimelinesRepository.prototype.getList = function (id, params) {
-        return new Paginator(this.http, "/api/v1/timelines/list/".concat(id), params);
+    TimelinesRepository.prototype.fetchList = function (id, params) {
+        return this.iterateList(id, params).next();
     };
     /**
      * View statuses with a “direct” privacy, from your account or in your notifications.
@@ -22226,25 +22272,41 @@ var TimelinesRepository = /** @class */ (function () {
      * @return Array of Status
      * @see https://docs.joinmastodon.org/methods/timelines/
      */
-    TimelinesRepository.prototype.getDirect = function (params) {
-        return new Paginator(this.http, '/api/v1/timelines/direct', params);
+    TimelinesRepository.prototype.fetchDirect = function (params) {
+        return this.iterateDirect(params).next();
     };
     __decorate([
         version({ since: '0.0.0' })
-    ], TimelinesRepository.prototype, "getHomeIterable", null);
+    ], TimelinesRepository.prototype, "iterateHome", null);
     __decorate([
         version({ since: '0.0.0' })
-    ], TimelinesRepository.prototype, "getPublicIterable", null);
+    ], TimelinesRepository.prototype, "iteratePublic", null);
     __decorate([
         version({ since: '0.0.0' })
-    ], TimelinesRepository.prototype, "getTagIterable", null);
+    ], TimelinesRepository.prototype, "iterateHashtag", null);
     __decorate([
         version({ since: '2.1.0' })
-    ], TimelinesRepository.prototype, "getList", null);
+    ], TimelinesRepository.prototype, "iterateList", null);
     __decorate([
         deprecated('Use conversations API instead'),
         version({ since: '0.0.0', until: '2.9.3' })
-    ], TimelinesRepository.prototype, "getDirect", null);
+    ], TimelinesRepository.prototype, "iterateDirect", null);
+    __decorate([
+        version({ since: '0.0.0' })
+    ], TimelinesRepository.prototype, "fetchHome", null);
+    __decorate([
+        version({ since: '0.0.0' })
+    ], TimelinesRepository.prototype, "fetchPublic", null);
+    __decorate([
+        version({ since: '0.0.0' })
+    ], TimelinesRepository.prototype, "fetchHashtag", null);
+    __decorate([
+        version({ since: '2.1.0' })
+    ], TimelinesRepository.prototype, "fetchList", null);
+    __decorate([
+        deprecated('Use conversations API instead'),
+        version({ since: '0.0.0', until: '2.9.3' })
+    ], TimelinesRepository.prototype, "fetchDirect", null);
     return TimelinesRepository;
 }());
 
@@ -22253,45 +22315,51 @@ var TrendRepository = /** @class */ (function () {
         this.http = http;
         this.version = version;
         this.config = config;
+        /** @deprecated Use `fetchTags` */
+        this.fetchAll = this.fetchTags.bind(this);
+        /** @deprecated Use `iterateStatuses` instead */
+        this.getStatuses = this.iterateStatuses.bind(this);
+        /** @deprecated Use `iterateStatuses` instead */
+        this.getLinks = this.iterateLinks.bind(this);
     }
+    TrendRepository.prototype.iterateStatuses = function (params) {
+        return new Paginator(this.http, '/api/v1/trends/statuses', params);
+    };
+    TrendRepository.prototype.iterateLinks = function (params) {
+        return new Paginator(this.http, '/api/v1/trends/links', params);
+    };
     Object.defineProperty(TrendRepository.prototype, "statuses", {
         get: function () {
-            return this.getStatuses();
+            return this.iterateStatuses();
         },
         enumerable: false,
         configurable: true
     });
     Object.defineProperty(TrendRepository.prototype, "links", {
         get: function () {
-            return this.getLinks();
+            return this.iterateLinks();
         },
         enumerable: false,
         configurable: true
     });
-    TrendRepository.prototype.getStatuses = function (params) {
-        return new Paginator(this.http, '/api/v1/trends/statuses', params);
-    };
-    TrendRepository.prototype.getLinks = function (params) {
-        return new Paginator(this.http, '/api/v1/trends/links', params);
-    };
     /**
      * Tags that are being used more frequently within the past week.
      * @param params Parameters
      * @return Array of Tag with History
      * @see https://docs.joinmastodon.org/methods/instance/trends/
      */
-    TrendRepository.prototype.fetchAll = function (params) {
+    TrendRepository.prototype.fetchTags = function (params) {
         return this.http.get('/api/v1/trends/tags', params);
     };
     __decorate([
         version({ since: '3.5.0' })
-    ], TrendRepository.prototype, "getStatuses", null);
+    ], TrendRepository.prototype, "iterateStatuses", null);
     __decorate([
         version({ since: '3.5.0' })
-    ], TrendRepository.prototype, "getLinks", null);
+    ], TrendRepository.prototype, "iterateLinks", null);
     __decorate([
         version({ since: '3.0.0' })
-    ], TrendRepository.prototype, "fetchAll", null);
+    ], TrendRepository.prototype, "fetchTags", null);
     return TrendRepository;
 }());
 
@@ -22306,6 +22374,66 @@ var EmailRepository = /** @class */ (function () {
     };
     return EmailRepository;
 }());
+
+var TagRepository = /** @class */ (function () {
+    function TagRepository(http, version, config) {
+        this.http = http;
+        this.version = version;
+        this.config = config;
+    }
+    /**
+     * Show a hashtag and its associated information
+     * @param id The name of the hashtag
+     * @return Tag
+     */
+    TagRepository.prototype.fetch = function (id) {
+        return this.http.get("/api/v1/tags/".concat(id));
+    };
+    /**
+     * Follow a hashtag. Posts containing a followed hashtag will be inserted into your home timeline.
+     * @param id The name of the hashtag
+     * @return Tag
+     */
+    TagRepository.prototype.follow = function (id) {
+        return this.http.post("/api/v1/tags/".concat(id, "/follow"));
+    };
+    /**
+     * Unfollow a hashtag. Posts containing a followed hashtag will no longer be inserted into your home timeline.
+     * @param id The name of the hashtag
+     * @return Tag
+     */
+    TagRepository.prototype.unfollow = function (id) {
+        return this.http.post("/api/v1/tags/".concat(id, "/unfollow"));
+    };
+    __decorate([
+        version({ since: '4.0.0' })
+    ], TagRepository.prototype, "fetch", null);
+    __decorate([
+        version({ since: '4.0.0' })
+    ], TagRepository.prototype, "follow", null);
+    __decorate([
+        version({ since: '4.0.0' })
+    ], TagRepository.prototype, "unfollow", null);
+    return TagRepository;
+}());
+
+var FollowedTagRepository = /** @class */ (function (_super) {
+    __extends(FollowedTagRepository, _super);
+    function FollowedTagRepository(http, version, config) {
+        var _this = _super.call(this) || this;
+        _this.http = http;
+        _this.version = version;
+        _this.config = config;
+        return _this;
+    }
+    FollowedTagRepository.prototype.iterate = function (params) {
+        return new Paginator(this.http, '/api/v1/followed_tags', params);
+    };
+    __decorate([
+        version({ since: '4.0.0' })
+    ], FollowedTagRepository.prototype, "iterate", null);
+    return FollowedTagRepository;
+}(IterableRepository));
 
 var ReportRepository = /** @class */ (function () {
     function ReportRepository(http, version, config) {
@@ -22554,6 +22682,8 @@ var MastoClient = /** @class */ (function () {
         this.timelines = new TimelinesRepository(this.http, this.version, this.config);
         this.trends = new TrendRepository(this.http, this.version, this.config);
         this.email = new EmailRepository(this.http, this.version, this.config);
+        this.tags = new TagRepository(this.http, this.version, this.config);
+        this.followedTags = new FollowedTagRepository(this.http, this.version, this.config);
     }
     /**
      * Search results
@@ -22587,7 +22717,7 @@ var BaseHttp = /** @class */ (function () {
     };
     BaseHttp.prototype.resolveUrl = function (path, params) {
         if (params === void 0) { params = {}; }
-        var searchParams = this.serializer.serialize('application/x-www-form-urlencoded', params);
+        var searchParams = this.serializer.serializeQueryString(params);
         return "".concat(this.config.url).concat(path).concat(searchParams !== '' ? "?".concat(searchParams) : '');
     };
     BaseHttp.prototype.getContentType = function (headers) {
@@ -22629,11 +22759,11 @@ var HttpAxiosImpl = /** @class */ (function (_super) {
         _this.serializer = serializer;
         _this.axios = node_modules_axios.create({
             baseURL: config.url,
-            headers: _this.createHeader(),
+            headers: _this.createHeader(config.headers),
             proxy: config.proxy,
             timeout: config.timeout,
             transformRequest: function (data, headers) {
-                if (headers == null) {
+                if (headers == undefined) {
                     throw new MastoError('headers is null');
                 }
                 var result = _this.serializer.serialize(headers['Content-Type'], data);
@@ -22648,19 +22778,17 @@ var HttpAxiosImpl = /** @class */ (function (_super) {
                 return result;
             },
             transformResponse: function (data, headers) {
-                if (headers == null) {
+                if (headers == undefined) {
                     throw new MastoError('headers is null');
                 }
                 var contentType = _this.getContentType(headers);
-                if (contentType == null) {
+                if (contentType == undefined) {
                     throw new MastoError('Content-Type is not defined');
                 }
                 return _this.serializer.deserialize(contentType, data);
             },
             paramsSerializer: {
-                serialize: function (params) {
-                    return _this.serializer.serialize('application/x-www-form-urlencoded', params);
-                },
+                serialize: function (params) { return _this.serializer.serializeQueryString(params); },
             },
         });
         return _this;
@@ -22700,6 +22828,7 @@ var HttpAxiosImpl = /** @class */ (function (_super) {
                         }
                         data = (_a = error_1.response) === null || _a === void 0 ? void 0 : _a.data;
                         throw createError({
+                            cause: error_1,
                             statusCode: (_b = error_1 === null || error_1 === void 0 ? void 0 : error_1.response) === null || _b === void 0 ? void 0 : _b.status,
                             message: data === null || data === void 0 ? void 0 : data.error,
                             details: data === null || data === void 0 ? void 0 : data.errorDescription,
@@ -22727,21 +22856,21 @@ var HttpNativeImpl = /** @class */ (function (_super) {
     HttpNativeImpl.prototype.request = function (request) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, timeout, proxy, method, data, url, headers, reqContentType, body, response, text, resContentType, e_1, data_1;
+            var _b, timeout, proxy, method, data, params, url, headers, reqContentType, body, response, text, resContentType, error_1, data_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _b = this.config, timeout = _b.timeout, proxy = _b.proxy;
-                        method = request.method, data = request.data;
-                        if (proxy != null) {
+                        method = request.method, data = request.data, params = request.params;
+                        if (proxy != undefined) {
                             // eslint-disable-next-line no-console
                             console.warn('Proxies are not supported on HttpNativeImpl');
                         }
-                        if (timeout != null) {
+                        if (timeout != undefined) {
                             // eslint-disable-next-line no-console
                             console.warn('Timeouts are not supported on HttpNativeImpl');
                         }
-                        url = this.resolveUrl(request.url, request.params);
+                        url = this.resolveUrl(request.url, params);
                         headers = new Headers(this.createHeader(request.headers));
                         reqContentType = (_a = headers.get('Content-Type')) !== null && _a !== void 0 ? _a : 'application/json';
                         body = this.serializer.serialize(reqContentType, data);
@@ -22770,7 +22899,7 @@ var HttpNativeImpl = /** @class */ (function (_super) {
                     case 3:
                         text = _c.sent();
                         resContentType = this.getContentType(HttpNativeImpl.toHeaders(response.headers));
-                        if (resContentType == null) {
+                        if (resContentType == undefined) {
                             throw new MastoError('Content-Type is not defined');
                         }
                         return [2 /*return*/, {
@@ -22778,21 +22907,22 @@ var HttpNativeImpl = /** @class */ (function (_super) {
                                 data: this.serializer.deserialize('application/json', text),
                             }];
                     case 4:
-                        e_1 = _c.sent();
-                        if (!(e_1 instanceof Response)) {
-                            throw e_1;
+                        error_1 = _c.sent();
+                        if (!(error_1 instanceof Response)) {
+                            throw error_1;
                         }
-                        return [4 /*yield*/, e_1.json()];
+                        return [4 /*yield*/, error_1.json()];
                     case 5:
                         data_1 = _c.sent();
                         throw createError({
-                            statusCode: e_1.status,
+                            cause: error_1,
+                            statusCode: error_1.status,
                             message: data_1 === null || data_1 === void 0 ? void 0 : data_1.error,
                             details: data_1 === null || data_1 === void 0 ? void 0 : data_1.errorDescription,
                             description: data_1 === null || data_1 === void 0 ? void 0 : data_1.details,
-                            limit: e_1.headers.get('X-RateLimit-Limit'),
-                            remaining: e_1.headers.get('X-RateLimit-Remaining'),
-                            reset: e_1.headers.get('X-RateLimit-Reset'),
+                            limit: error_1.headers.get('X-RateLimit-Limit'),
+                            remaining: error_1.headers.get('X-RateLimit-Remaining'),
+                            reset: error_1.headers.get('X-RateLimit-Reset'),
                         });
                     case 6: return [2 /*return*/];
                 }
@@ -22801,13 +22931,15 @@ var HttpNativeImpl = /** @class */ (function (_super) {
     };
     HttpNativeImpl.toHeaders = function (headers) {
         var result = {};
+        // eslint-disable-next-line unicorn/no-array-for-each
         headers.forEach(function (value, key) {
-            result[(0,dist.headerCase)(key)] = value;
+            result[key.toLowerCase()] = value;
         });
         return result;
     };
     HttpNativeImpl.hasBlob = function (formData) {
         var hasBlob = false;
+        // eslint-disable-next-line unicorn/no-array-for-each
         formData.forEach(function (v) { return (hasBlob || (hasBlob = v instanceof Blob)); });
         return hasBlob;
     };
@@ -22841,23 +22973,41 @@ var flattenObject = function (object, parent) {
         ? (_a = {}, _a[parent] = object, _a) : object;
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-var fromEntries = function (entries) {
-    var object = {};
-    for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-        var _a = entries_1[_i], key = _a[0], value = _a[1];
-        object[key] = value;
+/**
+ * Encodes URI in Rails format
+ */
+var stringify = function (object) {
+    if (!dist_isObject(object)) {
+        return '';
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return object;
+    var values = Object.entries(object)
+        .reduce(function (prev, _a) {
+        var k = _a[0], v = _a[1];
+        if (Array.isArray(v)) {
+            var xs = v.map(function (x) { return "".concat(k, "[]=").concat(encodeURIComponent(x)); });
+            return __spreadArray(__spreadArray([], prev, true), xs, true);
+        }
+        if (v == undefined) {
+            return prev;
+        }
+        if (typeof v === 'string' ||
+            typeof v === 'number' ||
+            typeof v === 'boolean') {
+            return __spreadArray(__spreadArray([], prev, true), ["".concat(k, "=").concat(encodeURIComponent(v))], false);
+        }
+        throw new TypeError('Encoding nested object is not supported');
+    }, [])
+        .join('&');
+    return values;
 };
-// prettier-ignore
+var railsQueryString = { stringify: stringify };
+
 var transformKeys = function (data, transform) {
     if (Array.isArray(data)) {
         return data.map(function (value) { return transformKeys(value, transform); });
     }
     if (dist_isObject(data)) {
-        return fromEntries(Object.entries(data).map(function (_a) {
+        return Object.fromEntries(Object.entries(data).map(function (_a) {
             var key = _a[0], value = _a[1];
             return [
                 transform(key),
@@ -22868,87 +23018,47 @@ var transformKeys = function (data, transform) {
     return data;
 };
 
-var SerializerNodejsImpl = /** @class */ (function () {
-    function SerializerNodejsImpl() {
-    }
-    SerializerNodejsImpl.prototype.serialize = function (type, rawData) {
-        if (rawData == null)
-            return;
-        var data = transformKeys(rawData, dist.snakeCase);
-        // prettier-ignore
-        switch (type) {
-            case 'application/json':
-                return JSON.stringify(data);
-            case 'multipart/form-data': {
-                var formData_1 = new FormData();
-                Object
-                    .entries(flattenObject(data))
-                    .forEach(function (_a) {
-                    var key = _a[0], value = _a[1];
-                    return formData_1.append(key, value);
-                });
-                return formData_1;
-            }
-            case 'application/x-www-form-urlencoded':
-                return (0,external_querystring_namespaceObject.stringify)(data);
-            default:
-                return;
-        }
-    };
-    SerializerNodejsImpl.prototype.deserialize = function (type, data) {
-        switch (type) {
-            case 'application/json':
-                try {
-                    return transformKeys(JSON.parse(data), dist.camelCase);
-                }
-                catch (_a) {
-                    return undefined;
-                }
-            default:
-                throw new Error("Unknown content type ".concat(type, ", ").concat(data));
-        }
-    };
-    return SerializerNodejsImpl;
-}());
-
 var SerializerNativeImpl = /** @class */ (function () {
     function SerializerNativeImpl() {
     }
     SerializerNativeImpl.prototype.serialize = function (type, rawData) {
-        if (rawData == null)
+        if (rawData == undefined)
             return;
         var data = transformKeys(rawData, dist.snakeCase);
-        // prettier-ignore
         switch (type) {
-            case 'application/json':
+            case 'application/json': {
                 return JSON.stringify(data);
-            case 'multipart/form-data': {
-                var formData_1 = new FormData();
-                Object
-                    .entries(flattenObject(data))
-                    .forEach(function (_a) {
-                    var key = _a[0], value = _a[1];
-                    return formData_1.append(key, value);
-                });
-                return formData_1;
             }
-            case 'application/x-www-form-urlencoded':
-                return new URLSearchParams(Object.entries(data)).toString();
-            default:
+            case 'multipart/form-data': {
+                var formData = new FormData();
+                for (var _i = 0, _a = Object.entries(flattenObject(data)); _i < _a.length; _i++) {
+                    var _b = _a[_i], key = _b[0], value = _b[1];
+                    formData.append(key, value);
+                }
+                return formData;
+            }
+            default: {
                 return;
+            }
         }
+    };
+    SerializerNativeImpl.prototype.serializeQueryString = function (rawData) {
+        var data = transformKeys(rawData, dist.snakeCase);
+        return railsQueryString.stringify(data);
     };
     SerializerNativeImpl.prototype.deserialize = function (type, data) {
         switch (type) {
-            case 'application/json':
+            case 'application/json': {
                 try {
                     return transformKeys(JSON.parse(data), dist.camelCase);
                 }
                 catch (_a) {
                     return undefined;
                 }
-            default:
-                throw new Error("Unknown content type ".concat(type, ", ").concat(data));
+            }
+            default: {
+                throw new MastoDeserializeError("Unknown content type ".concat(type, " returned from the server."), type, data);
+            }
         }
     };
     return SerializerNativeImpl;
@@ -22959,7 +23069,7 @@ var BaseWs = /** @class */ (function () {
     }
     BaseWs.prototype.supportsSecureToken = function () {
         if (this.config.disableVersionCheck) {
-            return false;
+            return true;
         }
         // Since v2.8.4, it is supported to pass access token with`Sec-Websocket-Protocol`
         // https://github.com/tootsuite/mastodon/pull/10818
@@ -22972,85 +23082,16 @@ var BaseWs = /** @class */ (function () {
         if (!this.supportsSecureToken()) {
             params.accessToken = this.config.accessToken;
         }
-        var query = this.serializer.serialize('application/x-www-form-urlencoded', params);
+        var query = this.serializer.serializeQueryString(params);
         return this.baseUrl + path + (query !== '' ? "?".concat(query) : '');
     };
     BaseWs.prototype.createProtocols = function (protocols) {
         if (protocols === void 0) { protocols = []; }
-        return this.supportsSecureToken() && this.config.accessToken != null
-            ? __spreadArray([this.config.accessToken], protocols, true) : [];
+        return this.supportsSecureToken() && this.config.accessToken != undefined
+            ? __spreadArray([this.config.accessToken], protocols, true) : protocols;
     };
     return BaseWs;
 }());
-
-/**
- * Mastodon streaming api wrapper
- */
-var WsEventsNodejsImpl = /** @class */ (function (_super) {
-    __extends(WsEventsNodejsImpl, _super);
-    function WsEventsNodejsImpl(ws, serializer) {
-        var _this = _super.call(this) || this;
-        _this.ws = ws;
-        _this.serializer = serializer;
-        /**
-         * Parse JSON data and emit it as an event
-         * @param message Websocket message
-         */
-        _this.handleMessage = function (_a) {
-            var data = _a.data;
-            var event = _this.serializer.deserialize('application/json', data);
-            var args = [];
-            try {
-                args.push(_this.serializer.deserialize('application/json', event.payload));
-            }
-            catch (_b) {
-                args = [];
-            }
-            _this.emit.apply(_this, __spreadArray([event.event], args, false));
-        };
-        return _this;
-    }
-    /**
-     * Connect to the websocket endpoint
-     * @param url URL of the websocket endpoint
-     * @param protocols Subprotocol(s) for `Sec-Websocket-Protocol`
-     * @param params URL parameters
-     */
-    WsEventsNodejsImpl.connect = function (url, serializer, protocols) {
-        return new Promise(function (resolve, reject) {
-            var ws = new isomorphic_ws_node(url, protocols);
-            var instance = new WsEventsNodejsImpl(ws, serializer);
-            ws.addEventListener('message', instance.handleMessage);
-            ws.addEventListener('error', reject);
-            ws.addEventListener('open', function () { return resolve(instance); });
-        });
-    };
-    /**
-     * Disconnect from the websocket endpoint
-     */
-    WsEventsNodejsImpl.prototype.disconnect = function () {
-        if (!this.ws)
-            return;
-        this.ws.close();
-    };
-    return WsEventsNodejsImpl;
-}(eventemitter3));
-var WsNodejsImpl = /** @class */ (function (_super) {
-    __extends(WsNodejsImpl, _super);
-    function WsNodejsImpl(baseUrl, version, config, serializer) {
-        var _this = _super.call(this) || this;
-        _this.baseUrl = baseUrl;
-        _this.version = version;
-        _this.config = config;
-        _this.serializer = serializer;
-        return _this;
-    }
-    WsNodejsImpl.prototype.stream = function (path, params) {
-        if (params === void 0) { params = {}; }
-        return WsEventsNodejsImpl.connect(this.resolveUrl(path, params), this.serializer, this.createProtocols());
-    };
-    return WsNodejsImpl;
-}(BaseWs));
 
 /**
  * Mastodon streaming api wrapper
@@ -23087,7 +23128,7 @@ var WsEventsNativeImpl = /** @class */ (function (_super) {
      */
     WsEventsNativeImpl.connect = function (url, serializer, protocols) {
         return new Promise(function (resolve, reject) {
-            var ws = new WebSocket(url, protocols);
+            var ws = new isomorphic_ws_node(url, protocols);
             var instance = new WsEventsNativeImpl(ws, serializer);
             ws.addEventListener('message', instance.handleMessage);
             ws.addEventListener('error', reject);
@@ -23126,18 +23167,17 @@ var index = /*#__PURE__*/Object.freeze({
 });
 
 var login = function (config) { return __awaiter(void 0, void 0, void 0, function () {
-    var version, serializer, http, instance, ws;
+    var serializer, http, instance, ws;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                version = 'yay yay';
-                serializer = new SerializerNodejsImpl();
+                serializer = new SerializerNativeImpl();
                 http = new HttpAxiosImpl(config, serializer);
                 return [4 /*yield*/, new InstanceRepository(http, '1.0.0', config).fetch()];
             case 1:
                 instance = _a.sent();
-                ws = new WsNodejsImpl(instance.urls.streamingApi, version, config, serializer);
-                return [2 /*return*/, new MastoClient(http, ws, version, config)];
+                ws = new WsNativeImpl(instance.urls.streamingApi, instance.version, config, serializer);
+                return [2 /*return*/, new MastoClient(http, ws, instance.version, config)];
         }
     });
 }); };
