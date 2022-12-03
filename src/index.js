@@ -8,6 +8,8 @@ const VISIBILITY_LEVEL = {
   FOLLOWERS_ONLY: "private",
 };
 
+const MAX_CHARS_COUNT = 500;
+
 async function mastodonSend(core) {
   try {
     // environment variables
@@ -25,13 +27,15 @@ async function mastodonSend(core) {
     }
 
     // inputs
-    const message = core.getInput("message", { required: true });
+    let message = core.getInput("message", { required: true });
     let visibility = core.getInput("visibility");
 
     // throw an error when the message is undefined
     if (!message) {
       throw new Error("Need to provide content to be published");
     }
+
+    message = trimMessage(message, MAX_CHARS_COUNT);
 
     // in case visibility is undefined, we will set "public" as a default value
     if (!visibility) {
@@ -52,7 +56,6 @@ async function mastodonSend(core) {
     }
 
     // send the message
-    // todo(cbrgm): Should we trim the message content if it exceeds the 500 character limit, or throw an error?
     let result;
     const masto = await login({
       url: mastodonURL,
@@ -77,6 +80,10 @@ async function mastodonSend(core) {
   } catch (err) {
     core.setFailed(err);
   }
+}
+
+function trimMessage(message, n) {
+  return message.length > n ? message.slice(0, n - 1) + "&hellip;" : message;
 }
 
 const core = require("@actions/core");
