@@ -36,6 +36,8 @@ Use the following step in your GitHub Actions Workflow:
 
 ```
 
+You can find more usage examples in the [./example-workflows](./example-workflows/) subfolder.
+
 ## Contributing & License
 
 Feel free to submit changes! See the [Contributing Guide](https://github.com/cbrgm/contributing/blob/master/CONTRIBUTING.md). This project is open-source
