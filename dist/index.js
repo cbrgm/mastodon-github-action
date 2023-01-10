@@ -22106,7 +22106,7 @@ async function mastodonSend(core) {
       disableVersionCheck: true,
     });
 
-    result = await masto.statuses.create({
+    result = await masto.v1.statuses.create({
       status: message,
       visibility: visibility,
     });
