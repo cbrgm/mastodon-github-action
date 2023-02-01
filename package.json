@@ -30,7 +30,7 @@
   "homepage": "https://github.com/cbrgm/mastodon-github-action#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
-    "masto": "^5.2.0"
+    "masto": "^5.7.0"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.36.1",
