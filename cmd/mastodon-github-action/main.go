@@ -144,6 +144,34 @@ func postStatus(url, accessToken string, status MastodonStatus) error {
 		return fmt.Errorf("API response: %s, Body: %s", resp.Status, string(body))
 	}
 
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("reading response body error: %w", err)
+	}
+
+	// Determine response type (immediate or scheduled) and output accordingly
+	if !strings.Contains(status.ScheduledAt, "T") {
+		var statusResponse StatusResponse
+		if err := json.Unmarshal(body, &statusResponse); err != nil {
+			return fmt.Errorf("unmarshaling status response error: %w", err)
+		}
+		setActionOutputs(map[string]string{
+			"id":  statusResponse.ID,
+			"url": statusResponse.URL,
+		})
+		log.Printf("Status Posted: %s, URL: %s", statusResponse.ID, statusResponse.URL)
+	} else {
+		var scheduledResponse ScheduledStatusResponse
+		if err := json.Unmarshal(body, &scheduledResponse); err != nil {
+			return fmt.Errorf("unmarshaling scheduled response error: %w", err)
+		}
+		setActionOutputs(map[string]string{
+			"id":           scheduledResponse.ID,
+			"scheduled_at": scheduledResponse.ScheduledAt.String(),
+		})
+		log.Printf("Scheduled Status ID: %s, Scheduled At: %s", scheduledResponse.ID, scheduledResponse.ScheduledAt)
+	}
+
 	return nil
 }
 
@@ -165,4 +193,3 @@ func parseScheduledAt(input string) (string, error) {
 
 	return t.Format(time.RFC3339), nil
 }
-
