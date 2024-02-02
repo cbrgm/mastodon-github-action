@@ -9,9 +9,9 @@ jobs:
     steps:
     - name: Send toot to Mastodon
       id: mastodon
-      uses: cbrgm/mastodon-github-action@v2
+      uses: cbrgm/mastodon-github-action@main
       with:
         message: "Hello from GitHub Actions!"
-        visibility: "public" # default: public
+        visibility: "private" # default: public
         access-token: ${{ secrets.MASTODON_ACCESS_TOKEN }} # access token
         url: ${{ secrets.MASTODON_URL }} # https://example.social

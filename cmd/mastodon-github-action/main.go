@@ -14,17 +14,19 @@ import (
 	"github.com/alexflint/go-arg"
 )
 
-// Application metadata
+// Application metadata variables store runtime and build information
+// for diagnostic purposes.
 var (
-	Version   string
-	Revision  string
-	GoVersion = runtime.Version()
-	StartTime = time.Now()
+	Version   string              // Version denotes the current version of the application.
+	Revision  string              // Revision indicates the git commit hash the binary was built from.
+	GoVersion = runtime.Version() // GoVersion records the version of Go runtime used to build the application.
+	StartTime = time.Now()        // StartTime captures the time when the application was started.
 )
 
-// VisibilityType defines Mastodon status visibility options
+// VisibilityType represents the Mastodon status visibility levels as type string.
 type VisibilityType string
 
+// Constants for Mastodon status visibility options.
 const (
 	VisibilityPublic   VisibilityType = "public"
 	VisibilityUnlisted VisibilityType = "unlisted"
@@ -32,10 +34,12 @@ const (
 	VisibilityDirect   VisibilityType = "direct"
 )
 
+// IsValid checks if the visibility type is a valid Mastodon visibility option.
 func (vt VisibilityType) IsValid() bool {
 	return vt == VisibilityPublic || vt == VisibilityUnlisted || vt == VisibilityPrivate || vt == VisibilityDirect
 }
 
+// MastodonStatus defines the structure for status messages to be sent to Mastodon.
 type MastodonStatus struct {
 	Status      string `json:"status"`
 	Visibility  string `json:"visibility"`
@@ -45,17 +49,19 @@ type MastodonStatus struct {
 	ScheduledAt string `json:"scheduled_at,omitempty"`
 }
 
+// ActionInputs collects all user inputs required for posting a status.
 type ActionInputs struct {
-	URL         string `arg:"--url,required"`
-	AccessToken string `arg:"--access-token,required"`
-	Message     string `arg:"--message,required"`
-	Visibility  string `arg:"--visibility"`
-	Sensitive   bool   `arg:"--sensitive"`
-	SpoilerText string `arg:"--spoiler-text"`
-	Language    string `arg:"--language"`
-	ScheduledAt string `arg:"--scheduled-at"`
+	URL         string `arg:"--url,required" env:"MASTODON_URL"`                   // Mastodon instance URL.
+	AccessToken string `arg:"--access-token,required" env:"MASTODON_ACCESS_TOKEN"` // User access token for authentication.
+	Message     string `arg:"--message,required" env:"MASTODON_MESSAGE"`           // The status message content.
+	Visibility  string `arg:"--visibility" env:"MASTODON_VISIBILITY"`              // Visibility of the status.
+	Sensitive   bool   `arg:"--sensitive" env:"MASTODON_SENSITIVE"`                // Flag to mark status as sensitive.
+	SpoilerText string `arg:"--spoiler-text" env:"MASTODON_SPOILER_TEXT"`          // Additional content warning text.
+	Language    string `arg:"--language" env:"MASTODON_LANGUAGE"`                  // Language of the status.
+	ScheduledAt string `arg:"--scheduled-at" env:"MASTODON_SCHEDULED_AT"`          // Time to schedule the status.
 }
 
+// StatusResponse models the response returned by Mastodon after posting a status.
 type StatusResponse struct {
 	ID         string `json:"id"`
 	URL        string `json:"url"`
@@ -64,6 +70,7 @@ type StatusResponse struct {
 	Visibility string `json:"visibility"`
 }
 
+// ScheduledStatusResponse captures the response for a successfully scheduled status post.
 type ScheduledStatusResponse struct {
 	ID          string    `json:"id"`
 	ScheduledAt time.Time `json:"scheduled_at"`
@@ -71,23 +78,30 @@ type ScheduledStatusResponse struct {
 
 func main() {
 	var args ActionInputs
-	arg.MustParse(&args)
+	arg.MustParse(&args) // Parses and validates command-line arguments.
 
-	log.Printf("Mastodon GitHub Action Version: %s, Build: %s", Version, Revision)
-
+	// Ensures the status message is not empty.
 	if strings.TrimSpace(args.Message) == "" {
 		log.Fatal("Status message cannot be empty")
 	}
 
+	// Sets default visibility to "public" if not specified.
+	if args.Visibility == "" {
+		args.Visibility = string(VisibilityPublic)
+	}
+
+	// Validates the provided visibility against Mastodon's accepted values.
 	if !VisibilityType(args.Visibility).IsValid() {
 		log.Fatalf("Invalid visibility: %s", args.Visibility)
 	}
 
+	// Parse and validate the scheduled time, if provided.
 	scheduledAt, err := parseScheduledAt(args.ScheduledAt)
 	if err != nil {
 		log.Fatalf("Scheduled at error: %v", err)
 	}
 
+	// Constructs the status payload and sends it to Mastodon.
 	status := MastodonStatus{
 		Status:      args.Message,
 		Visibility:  args.Visibility,
@@ -102,6 +116,7 @@ func main() {
 	}
 }
 
+// postStatus sends a status update to the specified Mastodon instance using the provided access token.
 func postStatus(url, accessToken string, status MastodonStatus) error {
 	payload, err := json.Marshal(status)
 	if err != nil {
@@ -129,37 +144,11 @@ func postStatus(url, accessToken string, status MastodonStatus) error {
 		return fmt.Errorf("API response: %s, Body: %s", resp.Status, string(body))
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("reading response body error: %w", err)
-	}
-
-	// Determine response type (immediate or scheduled) and output accordingly
-	if strings.Contains(status.ScheduledAt, "T") {
-		var scheduledResponse ScheduledStatusResponse
-		if err := json.Unmarshal(body, &scheduledResponse); err != nil {
-			return fmt.Errorf("unmarshaling scheduled response error: %w", err)
-		}
-		setActionOutputs(map[string]string{
-			"id":           scheduledResponse.ID,
-			"scheduled_at": scheduledResponse.ScheduledAt.String(),
-		})
-		log.Printf("Scheduled Status ID: %s, Scheduled At: %s", scheduledResponse.ID, scheduledResponse.ScheduledAt)
-	} else {
-		var statusResponse StatusResponse
-		if err := json.Unmarshal(body, &statusResponse); err != nil {
-			return fmt.Errorf("unmarshaling status response error: %w", err)
-		}
-		setActionOutputs(map[string]string{
-			"id":  statusResponse.ID,
-			"url": statusResponse.URL,
-		})
-		log.Printf("Status Posted: %s, URL: %s", statusResponse.ID, statusResponse.URL)
-	}
-
 	return nil
 }
 
+// parseScheduledAt converts a user-friendly date/time input into an ISO 8601 formatted string,
+// validating that it is at least 5 minutes in the future.
 func parseScheduledAt(input string) (string, error) {
 	if input == "" {
 		return "", nil // No scheduling requested
@@ -176,3 +165,4 @@ func parseScheduledAt(input string) (string, error) {
 
 	return t.Format(time.RFC3339), nil
 }
+

@@ -1,24 +1,19 @@
+name: Send Mastodon Message
+
 on:
-  push:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
-    - name: Checkout
-      uses: actions/checkout@v2
-
     - name: Send toot to Mastodon
       id: mastodon
-      uses: cbrgm/mastodon-github-action@v1
+      uses: cbrgm/mastodon-github-action@v2
       with:
         message: |
           #Mastodon these days really has some early twitter vibes!
           Really cool too see that it gets so much attention lately!
         visibility: "public" # default: public
-      env:
-        MASTODON_URL: ${{ secrets.MASTODON_URL }} # https://example.social
-        MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }} # access token
-
-
+        access-token: ${{ secrets.MASTODON_ACCESS_TOKEN }} # access token
+        url: ${{ secrets.MASTODON_URL }} # https://example.social
