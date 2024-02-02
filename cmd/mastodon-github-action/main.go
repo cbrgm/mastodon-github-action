@@ -137,6 +137,8 @@ func postStatus(url, accessToken string, status MastodonStatus) error {
 	if err != nil {
 		return fmt.Errorf("API call error: %w", err)
 	}
+
+	//nolint: errcheck
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {

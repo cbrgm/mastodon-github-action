@@ -38,6 +38,8 @@ func setActionOutputs(outputPairs map[string]string) {
 
 // setActionOutput sets a single GitHub Action output, with backward compatibility for
 // self-hosted runners without a GITHUB_OUTPUT environment file.
+//
+//nolint:unused
 func setActionOutput(outputName, value string) {
 	writeOutput(outputName, value)
 }
