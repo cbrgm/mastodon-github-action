@@ -1,20 +1,63 @@
 name: 'mastodon-send'
-description: 'Post a toot to Mastodon during a GitHub Actions workflow.'
+description: 'Send toots (messages) to a Mastodon instance from GitHub Actions'
+author: 'cbrgm'
+
 inputs:
+  url:
+    description: 'Mastodon instance URL'
+    required: true
+  access-token:
+    description: 'Mastodon access token for authentication'
+    required: true
   message:
-    description: 'The toot (message) content to be posted.'
+    description: 'The content of the toot'
     required: true
   visibility:
-    description: 'Message visibility level.'
+    description: 'Visibility of the toot (public, unlisted, private, direct)'
     required: false
+    default: 'public'
+  sensitive:
+    description: 'Mark the toot and attached media as sensitive'
+    required: false
+    default: "false"
+  spoiler-text:
+    description: 'Text to be shown as a warning before the actual content'
+    required: false
+  language:
+    description: 'ISO 639 language code for the toot'
+    required: false
+  scheduled-at:
+    description: 'ISO 8601 Datetime to schedule the toot. Must be at least 5 minutes in the future'
+    required: false
+
 outputs:
-  ts:
-    description: 'The timestamp of the message that was posted to Mastodon'
+  id:
+    description: 'The id of the toot posted'
   url:
     description: 'The url to the toot if present'
+  scheduled_at:
+    description: 'The datetime at which to post the status if present'
+
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: 'docker'
+  image: 'docker://ghcr.io/cbrgm/mastodon-github-action:v2'
+  args:
+    - --url
+    - ${{ inputs.url }}
+    - --access-token
+    - ${{ inputs.access-token }}
+    - --message
+    - ${{ inputs.message }}
+    - --visibility
+    - ${{ inputs.visibility }}
+    - --sensitive=${{ inputs.sensitive }}
+    - --spoiler-text
+    - ${{ inputs.spoiler-text }}
+    - --language
+    - ${{ inputs.language }}
+    - --scheduled-at
+    - ${{ inputs.scheduled-at }}
+
 branding:
   icon: edit
   color: blue
