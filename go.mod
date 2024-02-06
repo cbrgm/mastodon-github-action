@@ -1,6 +1,6 @@
 module github.com/cbrgm/mastodon-github-action
 
-go 1.21.7
+go 1.22.0
 
 require github.com/alexflint/go-arg v1.4.3
 
