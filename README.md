@@ -86,10 +86,15 @@ Advanced usage:
 
 You can find more usage examples in the [./example-workflows](./example-workflows/) subfolder.
 
+#### About message `visibility` types
+
+- **Public**: Posts are visible to everyone, including those outside the Fediverse. They can be found in Mastodon searches and on a user's public profile. Represented by a globe icon 🌎.
+- **Unlisted**: Posts are visible to everyone but do not appear in trending lists, Local or Federated timelines, or search results. Useful for replies in threads to avoid cluttering timelines. Marked with an open lock icon.
+- **Followers-only**: Only the poster's followers can see these posts. Advisable to enable follower requests to control who sees these posts. Indicated by a lock 🔒 or people 👥 icon.
+- **Mentioned**: Posts are only visible to users mentioned in the post. Use cautiously to ensure privacy. Denoted by an @ symbol.
+
 ## Contributing & License
 
-We welcome and value your contributions to this project! 👍 If you're interested in making improvements or adding features, please refer to our [Contributing Guide](https://github.com/cbrgm/mastodon-github-action/blob/main/CONTRIBUTING.md). This guide provides comprehensive instructions on how to submit changes, set up your development environment, and more.
-
-Please note that this project is developed in my spare time and is available for free 🕒💻. As an open-source initiative, it is governed by the [Apache 2.0 License](https://github.com/cbrgm/mastodon-github-action/blob/main/LICENSE). This license outlines your rights and obligations when using, modifying, and distributing this software.
-
-Your involvement, whether it's through code contributions, suggestions, or feedback, is crucial for the ongoing improvement and success of this project. Together, we can ensure it remains a useful and well-maintained resource for everyone 🌍.
+* **Contributions Welcome!**: Interested in improving or adding features? Check our [Contributing Guide](https://github.com/cbrgm/mastodon-github-action/blob/main/CONTRIBUTING.md) for instructions on submitting changes and setting up development environment.
+* **Open-Source & Free**: Developed in my spare time, available for free under [Apache 2.0 License](https://github.com/cbrgm/mastodon-github-action/blob/main/LICENSE). License details your rights and obligations.
+* **Your Involvement Matters**: Code contributions, suggestions, feedback crucial for improvement and success. Let's maintain it as a useful resource for all 🌍.
