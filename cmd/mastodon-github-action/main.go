@@ -51,14 +51,14 @@ type MastodonStatus struct {
 
 // ActionInputs collects all user inputs required for posting a status.
 type ActionInputs struct {
-	URL         string `arg:"--url,required" env:"MASTODON_URL"`                   // Mastodon instance URL.
-	AccessToken string `arg:"--access-token,required" env:"MASTODON_ACCESS_TOKEN"` // User access token for authentication.
-	Message     string `arg:"--message,required" env:"MASTODON_MESSAGE"`           // The status message content.
-	Visibility  string `arg:"--visibility" env:"MASTODON_VISIBILITY"`              // Visibility of the status.
-	Sensitive   bool   `arg:"--sensitive" env:"MASTODON_SENSITIVE"`                // Flag to mark status as sensitive.
-	SpoilerText string `arg:"--spoiler-text" env:"MASTODON_SPOILER_TEXT"`          // Additional content warning text.
-	Language    string `arg:"--language" env:"MASTODON_LANGUAGE"`                  // Language of the status.
-	ScheduledAt string `arg:"--scheduled-at" env:"MASTODON_SCHEDULED_AT"`          // Time to schedule the status.
+	URL         string `arg:"--url,required, env:MASTODON_URL"`                   // Mastodon instance URL.
+	AccessToken string `arg:"--access-token,required, env:MASTODON_ACCESS_TOKEN"` // User access token for authentication.
+	Message     string `arg:"--message,required, env:MASTODON_MESSAGE"`           // The status message content.
+	Visibility  string `arg:"--visibility, env:MASTODON_VISIBILITY"`              // Visibility of the status.
+	Sensitive   bool   `arg:"--sensitive, env:MASTODON_SENSITIVE"`                // Flag to mark status as sensitive.
+	SpoilerText string `arg:"--spoiler-text, env:MASTODON_SPOILER_TEXT"`          // Additional content warning text.
+	Language    string `arg:"--language, env:MASTODON_LANGUAGE"`                  // Language of the status.
+	ScheduledAt string `arg:"--scheduled-at, env:MASTODON_SCHEDULED_AT"`          // Time to schedule the status.
 }
 
 // StatusResponse models the response returned by Mastodon after posting a status.
