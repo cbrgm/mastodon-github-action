@@ -1,7 +1,7 @@
 ---
 repository:
   name: mastodon-github-action
-  description: Use this Action to send a toot (message) from a GitHub actions workflow to Mastodon
+  description: Use this Action to send a toot (message) from a GitHub Actions workflow to Mastodon
   homepage: https://cbrgm.net
   topics: gihub-actions, github, action, go, mastodon, toot
 
