@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-05-12T19:26:40.586572706Z",
+  "generated_at": "2025-05-15T20:50:51.592535601Z",
   "version": "1.2.29",
   "files": [
     {
@@ -61,6 +61,9 @@
     },
     {
       "path": ".gitignore"
+    },
+    {
+      "path": ".go-version"
     },
     {
       "path": ".golangci.yml"
