@@ -9,7 +9,7 @@ jobs:
     steps:
     - name: Send toot to Mastodon
       id: mastodon
-      uses: cbrgm/mastodon-github-action@f3158c7cdbb6afcbc613f7e37d24883f486239a3 # main
+      uses: cbrgm/mastodon-github-action@29a396c28bad8cb10557bbe7cbfe74cd21c60a8c # main
       with:
         message: "Hello from GitHub Actions!"
         visibility: "private" # default: public
