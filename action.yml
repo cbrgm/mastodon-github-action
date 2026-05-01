@@ -10,8 +10,8 @@ inputs:
     description: 'Mastodon access token for authentication'
     required: true
   message:
-    description: 'The content of the toot'
-    required: true
+    description: 'The content of the toot. Optional if media-paths is provided.'
+    required: false
   visibility:
     description: 'Visibility of the toot (public, unlisted, private, direct)'
     required: false
@@ -28,6 +28,12 @@ inputs:
     required: false
   scheduled-at:
     description: 'ISO 8601 Datetime to schedule the toot. Must be at least 5 minutes in the future'
+    required: false
+  media-paths:
+    description: 'Comma-separated list of media file paths to attach (max 4). Supported: images, video, audio.'
+    required: false
+  media-descriptions:
+    description: 'Comma-separated list of alt text descriptions for media files. If one value is provided, it applies to all.'
     required: false
 
 outputs:
@@ -57,6 +63,10 @@ runs:
     - ${{ inputs.language }}
     - --scheduled-at
     - ${{ inputs.scheduled-at }}
+    - --media-paths
+    - ${{ inputs.media-paths }}
+    - --media-descriptions
+    - ${{ inputs.media-descriptions }}
 
 branding:
   icon: edit
