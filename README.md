@@ -18,12 +18,14 @@
 
 - `url`: **Required** - Mastodon instance URL.
 - `access-token`: **Required** - Mastodon access token for authentication. Use secrets to protect your access token.
-- `message`: **Required** - The content of the toot to be posted.
+- `message`: **Required** (optional if `media-paths` is provided) - The content of the toot to be posted.
 - `visibility`: Optional - Visibility of the toot (`public`, `unlisted`, `private`, `direct`). Defaults to `public`.
 - `sensitive`: Optional - Mark the toot and attached media as sensitive. Accepts `true` or `false`. Defaults to `false`.
 - `spoiler-text`: Optional - Text to be shown as a warning before the actual content, used when `sensitive` is `true`.
 - `language`: Optional - ISO 639 language code for the toot, helping to categorize the post by language.
 - `scheduled-at`: Optional - ISO 8601 Datetime when the toot should be posted. Must be at least 5 minutes in the future.
+- `media-paths`: Optional - Comma-separated list of media file paths to attach to the toot (max 4). Supports images, video, and audio.
+- `media-descriptions`: Optional - Comma-separated list of alt text descriptions for the media files. If only one value is provided, it is used for all attachments.
 
 ## Outputs
 
@@ -82,6 +84,46 @@ Advanced usage:
     echo "Toot ID: ${{ steps.mastodon_toot.outputs.id }}"
     echo "Toot URL: ${{ steps.mastodon_toot.outputs.url }}"
     echo "Scheduled at: ${{ steps.mastodon_toot.outputs.scheduled_at }}"
+```
+
+### Posting with Media Attachments
+
+Attach a single image with alt text:
+
+```yaml
+- name: Send toot with image
+  uses: cbrgm/mastodon-github-action@v2
+  with:
+    access-token: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+    url: ${{ secrets.MASTODON_URL }}
+    message: "Check out this screenshot!"
+    media-paths: "screenshot.png"
+    media-descriptions: "A screenshot of the new dashboard"
+```
+
+Attach multiple images (up to 4):
+
+```yaml
+- name: Send toot with multiple images
+  uses: cbrgm/mastodon-github-action@v2
+  with:
+    access-token: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+    url: ${{ secrets.MASTODON_URL }}
+    message: "Latest photos from the event"
+    media-paths: "photos/img1.jpg, photos/img2.jpg, photos/img3.jpg"
+    media-descriptions: "First image description, Second image description, Third image description"
+```
+
+Post media without text (media-only toot):
+
+```yaml
+- name: Send media-only toot
+  uses: cbrgm/mastodon-github-action@v2
+  with:
+    access-token: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+    url: ${{ secrets.MASTODON_URL }}
+    media-paths: "artifact.png"
+    media-descriptions: "Build artifact from CI"
 ```
 
 You can find more usage examples in the [./example-workflows](./example-workflows/) subfolder.
